@@ -1,0 +1,11 @@
+.canvas__container{
+    border: 3px solid black;
+    background-color: white;
+    border-radius: 20px;
+}
+
+.canvas{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
