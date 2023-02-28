@@ -2,12 +2,12 @@ import React from 'react';
 import './Canvas.css';
 import {useOnDraw} from './Hooks';
 
-function Canvas() {
+function Canvas({blockPickerColor, canvasColor}) {
 
-    const {setCanvasRef, onMouseDown} = useOnDraw(OnDraw)
+    const {setCanvasRef, onMouseDown, onMouseUp} = useOnDraw(OnDraw)
 
     function OnDraw(ctx, point, prevPoint){
-        DrawLine(prevPoint, point, ctx, '#000000', 5)
+        DrawLine(prevPoint, point, ctx, blockPickerColor, 5)
     }
 
     function DrawLine(start, end, ctx, color, width) {
@@ -27,7 +27,7 @@ function Canvas() {
 
     return (
         <div className='canvas'>
-            <canvas className="canvas__container" width={window.innerWidth - 100} height={window.innerHeight - 150} ref={setCanvasRef} onMouseDown={onMouseDown}/>
+            <canvas className="canvas__container" style={{backgroundColor: `${canvasColor}`}} width={window.innerWidth - 100} height={window.innerHeight - 200} ref={setCanvasRef} onTouchEnd={onMouseUp} onMouseUp={onMouseUp} onTouchStart={onMouseDown} onMouseDown={onMouseDown}/>
         </div>
     )
 }

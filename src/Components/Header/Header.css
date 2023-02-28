@@ -14,12 +14,27 @@
     border: 2px solid black;
     border-radius: 20px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    gap: 30px;
+    padding-left: 20px;
 }
 
 .header__image{
     width: 150px;
+}
+
+.color__container{
+    display: inline-block;
+    position: relative;
+    height: 30px;
+}
+
+
+.dropdown__container {
+    position: absolute;
+    top: 40px;
+    left: -70px;
+    z-index: 1;
 }
 
 @media screen and (max-width: 768px) {

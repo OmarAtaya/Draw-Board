@@ -7,7 +7,6 @@ export function useOnDraw(OnDraw) {
     const isDrawingRef = useRef(false)
 
     const mouseMoveListenerRef = useRef(null)
-    const mouseUpListenerRef = useRef(null)
 
     const prevPointRef = useRef(null)
 
@@ -15,8 +14,21 @@ export function useOnDraw(OnDraw) {
 
         function initMouseMoveListener() {
             const mouseMoveListener = (e) => {
+                e.preventDefault()
                 if(isDrawingRef.current){
-                    const point = computePointInCavas(e.clientX, e.clientY)
+                    const point = computePointInCavas(e.pageX, e.pageY)
+                    const ctx = canvasRef.current.getContext('2d')
+                    if(OnDraw)
+                    {
+                        OnDraw(ctx, point, prevPointRef.current)
+                    }
+                    prevPointRef.current = point;
+                }
+            }
+            const touchMoveListener = (e) => {
+                e.preventDefault()
+                if(isDrawingRef.current){
+                    const point = computePointInCavas(e.pageX, e.pageY)
                     const ctx = canvasRef.current.getContext('2d')
                     if(OnDraw)
                     {
@@ -26,17 +38,9 @@ export function useOnDraw(OnDraw) {
                 }
             }
             mouseMoveListenerRef.current = mouseMoveListener
+            canvasRef.current.addEventListener("touchmove", touchMoveListener)
             window.addEventListener('mousemove', mouseMoveListener)
     
-        }
-
-        function initMouseUpListener(){
-            const listener = () => {
-                isDrawingRef.current = false;
-                prevPointRef.current = null;
-            }
-            mouseUpListenerRef.current = listener
-            window.addEventListener('mouseup', listener)
         }
 
         function computePointInCavas(clientX, clientY) {
@@ -57,13 +61,9 @@ export function useOnDraw(OnDraw) {
             if(mouseMoveListenerRef.current){
                 window.removeEventListener('mousemove', mouseMoveListenerRef.current)
             }
-            if(mouseUpListenerRef.current){
-                window.removeEventListener('mouseup', mouseUpListenerRef.current)
-            }
         }
 
         initMouseMoveListener()
-        initMouseUpListener()
 
         return () => {
             removeListeners();
@@ -79,12 +79,20 @@ export function useOnDraw(OnDraw) {
         canvasRef.current = ref;
     }
 
-    function onMouseDown() {
+    function onMouseDown(e) {
         isDrawingRef.current = true;
+        e.preventDefault()
+    }
+
+    function onMouseUp(e){
+        isDrawingRef.current = false;
+        prevPointRef.current = null;
+        e.preventDefault()
     }
 
     return {
         setCanvasRef,
-        onMouseDown
+        onMouseDown,
+        onMouseUp
     }
 }
